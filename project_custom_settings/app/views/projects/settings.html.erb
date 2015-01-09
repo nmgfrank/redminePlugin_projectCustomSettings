@@ -1,0 +1,22 @@
+<%
+
+    custom_tabs = project_settings_tabs
+
+            
+    custom_tabs <<   {:name => 'custom_comment', :action => :manage_custom_comment, :partial => 'projects/settings/custom_comment', :label => :project_custom_settings_comment_label}
+    custom_tabs.select {|tab| User.current.allowed_to?(tab[:action], @project)}
+    
+    if User.current.admin?
+        custom_tabs.push({:name => 'custom_script', :action => :manage_custom_script, :partial => 'projects/settings/custom_script', :label => :project_custom_settings_script_label})
+        custom_tabs.push({:name => 'members_import_by_mail', :action => :members_import_by_mail, :partial => 'projects/settings/members_import_by_mail', :label => :project_custom_settings_members_import_by_mail})
+    end
+%>
+
+
+
+<h2><%=l(:label_settings)%></h2>
+
+
+<%= render_tabs custom_tabs %>
+
+<% html_title(l(:label_settings)) -%>

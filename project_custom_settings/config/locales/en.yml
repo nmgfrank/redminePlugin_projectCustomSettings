@@ -1,0 +1,5 @@
+# English strings go here for Rails i18n
+en:
+  project_custom_settings_script_label: "Custom Script"
+  project_custom_settings_comment_label: "Custom Comment"
+  project_custom_settings_members_import_by_mail: "Members Import"

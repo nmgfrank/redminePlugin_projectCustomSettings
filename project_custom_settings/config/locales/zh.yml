@@ -1,0 +1,5 @@
+# English strings go here for Rails i18n
+zh:
+  project_custom_settings_script_label: "自定义脚本"
+  project_custom_settings_comment_label: "自定义注释"
+  project_custom_settings_members_import_by_mail: "成员导入"

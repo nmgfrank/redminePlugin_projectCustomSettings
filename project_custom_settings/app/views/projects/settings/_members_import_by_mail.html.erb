@@ -1,0 +1,70 @@
+
+
+
+<form action="/plugin_project_custom_settings/members_import_by_mail" method="post" data-remote="true">
+    Mail List:
+    <textarea id="mail_list" name="mail_list" style="width: 100%; height: 300px;"></textarea>
+    <div id="custom_roles_area">
+        <% 
+            roles = Role.find_all_givable
+            roles.each do |role|   
+        %> 
+            <input type="checkbox" name="mail_import_user_roles[]" value="<%= role.id %>" /><%= role.name %><br>
+        <% end %>
+    </div>
+    Splitter:
+    <select name="splitter">
+        <option value="n">\n</option>
+        <option value=";">;</option>
+        <option value=",">,</option>
+    </select>
+    Import Action:
+    <select id="mail_import_action" name="import_action">
+        <option value="analyze">Analyze</option>
+        <option value="import">Import</option>
+    </select> <br>   
+
+    
+    <br><br>
+    <input type="submit" value="Save" />
+    <input type="hidden" name="project_id" value="<%= @project.id %>" />
+</form>
+
+<div id="result">
+    <b>Users with invalid email</b>: 
+    <div id="invalid_user_list" style="margin-left: 25px;"></div>
+    
+    <b>Users added to the project</b>:
+    <div id="added_users_list" style="margin-left: 25px;"></div>
+
+    <b>Users Already in Project</b>:
+    <div id="exists_users_list" style="margin-left: 25px;"></div>
+
+</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    mail_import_show_roles();
+    $("#mail_import_action").change(function() {
+        mail_import_show_roles();
+    });
+    
+    function mail_import_show_roles() {
+        mail_import_action = $("#mail_import_action").val();
+        if (mail_import_action == "import") {
+            $("#custom_roles_area").show();
+        } else {
+            $("#custom_roles_area").hide();
+        }    
+    }
+});
+</script>
+
+
+    
+    
+    
+    
+    
+    
+    

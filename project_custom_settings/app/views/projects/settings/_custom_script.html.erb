@@ -1,0 +1,90 @@
+<%
+    trackers = @project.trackers
+    status_hash = {}
+    trackers.each do |tracker|
+        status_hash[tracker.id] = tracker.issue_statuses
+    end
+    
+    page_list = ["issue_edit"]
+
+%>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    status_array = new Array(); 
+    <% trackers.each do |tracker| %>
+        status_array["<%= tracker.id %>"] = new Array(); 
+        <% status_hash[tracker.id].each do |status| %>
+            status_array["<%= tracker.id %>"].push(["<%= status.name %>",<%= status.id %>]);   
+        <% end %>
+    <% end %>
+    get_script_info();
+    
+    $("#tracker_select_id").change(function() {
+        tracker_id = $(this).val().toString();
+        statuses = status_array[tracker_id];
+        
+        $("#status_select_id").html("");
+        for(var idx=0;idx<statuses.length;idx++){
+            $("#status_select_id").append("<option value='"+statuses[idx][1]+"'>"+statuses[idx][0]+"</option>");
+        }  
+        get_script_info();      
+    });
+    
+    $("#status_select_id").change(function() {
+        get_script_info();     
+    });
+    
+
+    function get_script_info() {
+        tracker_id = $("#tracker_select_id").val();
+        status_id = $("#status_select_id").val();
+        page = $("#page_select").val();
+    
+        $("#get_script_tracker").val(tracker_id);
+        $("#get_script_status").val(status_id);
+        $("#get_script_page").val(page);
+        
+        $("#get_custom_script_button").submit();
+    }
+});
+</script>
+
+
+<form action="/plugin_project_custom_settings/save_custom_script" method="post" data-remote="true">
+    <fieldset>
+        <legend></legend>
+        <% if trackers.length > 0 %>
+            Tracker: <%= select_tag("tracker_select_id", options_for_select(trackers.map {|t| [t.name,t.id]}) ) %>  
+            Status: <%= select_tag("status_select_id", options_for_select(status_hash[trackers[0].id].map {|s| [s.name,s.id]}) ) %>  
+            Page: <%= select_tag("page_select", options_for_select(page_list.map {|s| [s,s]}) ) %>  
+        <% end %>
+        <input type="hidden" name="project_id" value="<%= @project.id %>" />
+    </fieldset>
+
+    <div id="script_area_div" style="margin-top: 2px;">
+        <textarea id="script_area" name="msg" style="width: 100%; height: 300px;"></textarea>
+    </div>
+    
+    <input type="submit" value="Save" />
+</form>
+
+<form style="visibility:hidden;" action="/plugin_project_custom_settings/get_custom_script" method="post" data-remote="true">
+    <input id="get_script_project" type="text" name="project_id" value="<%= @project.id %>" />
+    <input id="get_script_tracker" type="text" name="tracker_id" value="" />
+    <input id="get_script_status" type="text" name="status_id" value="" />
+    <input id="get_script_page" type="text" name="page" value="" />
+
+    <input id="get_custom_script_button" type="submit" value="" />
+</form>    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

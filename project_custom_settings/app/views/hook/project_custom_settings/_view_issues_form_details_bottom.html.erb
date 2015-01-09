@@ -1,0 +1,26 @@
+
+<!--     Begin: Custom Script For Page issue_edit              -->
+<%
+    
+    page = "issue_edit"
+    custom_type = "script"
+    project_id = issue.project_id
+    status_id = issue.status_id
+    tracker_id = issue.tracker_id
+    
+    customscripts = PluginProjectCustomSettings.where(["tracker_id = ? and status_id = ? and project_id = ? and page = ? and custom_type='script'", tracker_id, status_id, project_id,page])
+    if !customscripts.blank?
+        @msg = customscripts[0].msg
+    else 
+        @msg = ""
+    end    
+%>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    <%= @msg.html_safe %>
+
+});
+    
+</script>
+<!--     End: Custom Script For Page issue_edit               -->

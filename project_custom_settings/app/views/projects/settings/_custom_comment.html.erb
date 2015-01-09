@@ -1,0 +1,110 @@
+<% content_for :header_tags do %>
+    <%= stylesheet_link_tag "kindeditor/themes/default/default.css", :plugin => "project_custom_settings"  %>
+    <%= javascript_include_tag "kindeditor/kindeditor-min.js",:plugin => "project_custom_settings" %>
+    <%= javascript_include_tag "kindeditor/lang/zh_CN.js",:plugin => "project_custom_settings" %>
+<% end %>
+
+
+
+<%
+    trackers = @project.trackers
+    status_hash = {}
+    trackers.each do |tracker|
+        status_hash[tracker.id] = tracker.issue_statuses
+    end
+    
+    page_list = ["issue_edit"]
+
+%>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    status_array = new Array(); 
+    <% trackers.each do |tracker| %>
+        status_array["<%= tracker.id %>"] = new Array(); 
+        <% status_hash[tracker.id].each do |status| %>
+            status_array["<%= tracker.id %>"].push(["<%= status.name %>",<%= status.id %>]);   
+        <% end %>
+    <% end %>
+    
+	var editor;
+	KindEditor.ready(function(K) {
+		window.editor = K.create('textarea[name="msg_comment"]', {
+			resizeType : 1,
+			allowPreviewEmoticons : false,
+			allowImageUpload : false,
+			items : [
+				'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline',
+				'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist',
+				'insertunorderedlist']
+		});
+	});
+	get_comment_info();    
+    
+    $("#tracker_select_id_comment").change(function() {
+        tracker_id = $(this).val().toString();
+        statuses = status_array[tracker_id];
+        
+        $("#status_select_id_comment").html("");
+        for(var idx=0;idx<statuses.length;idx++){
+            $("#status_select_id_comment").append("<option value='"+statuses[idx][1]+"'>"+statuses[idx][0]+"</option>");
+        }  
+        get_comment_info();      
+    });
+    
+    $("#status_select_id_comment").change(function() {
+        get_comment_info();     
+    });
+    
+
+    function get_comment_info() {
+
+        tracker_id = $("#tracker_select_id_comment").val();
+        status_id = $("#status_select_id_comment").val();
+        page = $("#page_select_comment").val();
+    
+        $("#get_comment_tracker").val(tracker_id);
+        $("#get_comment_status").val(status_id);
+        $("#get_comment_page").val(page);
+        $("#get_comment_button").submit();
+    }
+});
+</script>
+
+
+<form action="/plugin_project_custom_settings/save_custom_comment" method="post" data-remote="true">
+    <fieldset>
+        <legend></legend>
+        <% if trackers.length > 0 %>
+            Tracker: <%= select_tag("tracker_select_id_comment", options_for_select(trackers.map {|t| [t.name,t.id]}) ) %>  
+            Status: <%= select_tag("status_select_id_comment", options_for_select(status_hash[trackers[0].id].map {|s| [s.name,s.id]}) ) %>  
+            Page: <%= select_tag("page_select_comment", options_for_select(page_list.map {|s| [s,s]}) ) %>  
+        <% end %>
+        <input type="hidden" name="project_id_comment" value="<%= @project.id %>" />
+    </fieldset>
+
+    <div id="comment_area_div" style="margin-top: 2px;">
+        <textarea id="comment_area" name="msg_comment" style="width: 100%; height: 300px;"></textarea>   
+    </div>
+    
+    
+    <input type="submit" value="Save" />
+</form>
+
+<form style="visibility:hidden;" action="/plugin_project_custom_settings/get_custom_comment" method="post" data-remote="true">
+    <input id="get_comment_project" type="text" name="project_id_comment" value="<%= @project.id %>" />
+    <input id="get_comment_tracker" type="text" name="tracker_id_comment" value="" />
+    <input id="get_comment_status" type="text" name="status_id_comment" value="" />
+    <input id="get_comment_page" type="text" name="page_comment" value="" />
+
+    <input id="get_comment_button" type="submit" value="" />
+</form>    
+    
+    
+    
+    
+    
+    
+    
+    
+    

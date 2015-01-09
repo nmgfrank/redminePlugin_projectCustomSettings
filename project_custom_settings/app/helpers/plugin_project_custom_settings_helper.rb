@@ -1,0 +1,2 @@
+module PluginProjectCustomSettingsHelper
+end

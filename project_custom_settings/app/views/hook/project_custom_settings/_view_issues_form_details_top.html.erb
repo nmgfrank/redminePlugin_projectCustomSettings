@@ -1,0 +1,34 @@
+<!--     Begin: Custom Comment For Page issue_edit           -->
+<%
+    page = "issue_edit"
+    custom_type = "comment"
+    project_id = issue.project_id
+    status_id = issue.status_id
+    tracker_id = issue.tracker_id
+
+
+    customscripts = PluginProjectCustomSettings.where(["tracker_id = ? and status_id = ? and project_id = ? and page = ? and custom_type = 'comment'", tracker_id, status_id, project_id,page])
+
+    if !customscripts.blank?
+        @msg = customscripts[0].msg
+    else 
+        @msg = ""
+    end   
+
+%>
+
+<% if !@msg.blank? %>
+    <fieldset>
+        <legend>提示信息</legend>
+        <div style="width: 86%; margin: 0px auto 10px auto;padding: 0;">
+            <div id="ticket_alert_msg" style="width: 100%; height: auto;margin: 0; background: #f7f7f7;overflow-y:visible; " >
+                <%= @msg.html_safe %>
+            </div>
+        </div>
+    </fieldset>
+    
+<% end %>
+
+
+<!--     End: Custom Comment For Page issue_edit             -->
+
