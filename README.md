@@ -56,11 +56,3 @@ It has two modes. In mode of `Analyze`, system only analyze the status of mails 
 
 
 
-
-
-
-
-
-
-![image](https://github.com/nmgfrank/redminePlugin_redmineUpdater/blob/master/readme_pic/EnableModule.jpg) 
-
